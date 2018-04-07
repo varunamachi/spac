@@ -2,19 +2,30 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"github.com/shirou/gopsutil/host"
+	"github.com/shirou/gopsutil/cpu"
 )
 
 func main() {
-	for i := 0; i < 1; i++ {
-		ts, err := host.SensorsTemperatures()
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-		for _, t := range ts {
-			fmt.Printf("%s: %4.2f\n", t.SensorKey, t.Temperature)
+	c := make(chan os.Signal, 2)
+	signal.Notify(c, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-c
+		fmt.Println("Stopping...")
+		os.Exit(1)
+	}()
+	for {
+		stats, err := cpu.Percent(500*time.Millisecond, false)
+		if err == nil {
+			for _, s := range stats {
+				fmt.Printf("CPU usage: %3.2f\n", s)
+			}
+		} else {
+			fmt.Printf("Failed to retrieve CPU stat: %v", err)
 		}
 	}
 }
