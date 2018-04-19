@@ -6,8 +6,6 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/shirou/gopsutil/cpu"
 )
 
 func main() {
