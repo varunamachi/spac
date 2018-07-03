@@ -44,12 +44,6 @@
   version = "v1.2.0"
 
 [[projects]]
-  name = "github.com/shirou/gopsutil"
-  packages = ["."]
-  revision = "fc04d2dd9a512906a2604242b35275179e250eda"
-  version = "v2.18.03"
-
-[[projects]]
   branch = "master"
   name = "github.com/valyala/bytebufferpool"
   packages = ["."]
@@ -112,6 +106,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4626fde3ca87c7abb813d58032a5365a7ce6efe2dea3f3a0fdc11a5dd6cb4a8b"
+  inputs-digest = "53a4e5a067788112a82e86d828e95df2939557735bcf12c46f6478905d6dd21e"
   solver-name = "gps-cdcl"
   solver-version = 1
