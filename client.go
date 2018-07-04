@@ -20,20 +20,19 @@ func EntityLogin(creds EntityCreds) (err error) {
 		client.Token = loginResult.Token
 		client.User = loginResult.User
 	}
-	return err
 	return vlog.LogError("Spac:Client", err)
 }
 
 //Ping - ping the sparro server
-func Ping() (info vnet.M, err error) (err error, session *vnet.Session){
+func Ping() (session *vnet.Session, err error) {
 	rr := client.Get(vsec.Public, "ping")
 	if rr.Err == nil {
 		session := &vnet.Session{}
-		err == rr.Read(session)
+		err = rr.Read(session)
 	} else {
 		err = rr.Err
 	}
-	return info, vlog.LogError("Spac:Client", err)
+	return session, vlog.LogError("Spac:Client", err)
 }
 
 //SendParamValue - send a parameter value to sparrow server
