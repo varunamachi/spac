@@ -6,10 +6,20 @@ import (
 	"github.com/varunamachi/vaali/vsec"
 )
 
-var client *vnet.Client
+//SprwClient - client to a sparrow server. Uses vnet.Client
+type SprwClient struct {
+	*vnet.Client
+}
+
+//NewClient - creates a new sprw client
+func NewClient(address, appName, versionStr string) *SprwClient {
+	return &SprwClient{
+		Client: vnet.NewClient(address, appName, versionStr),
+	}
+}
 
 //EntityLogin - login to entity
-func EntityLogin(creds EntityCreds) (err error) {
+func (client *SprwClient) EntityLogin(creds EntityCreds) (err error) {
 	rr := client.Post(creds, vsec.Public, "entity/auth")
 	loginResult := struct {
 		Token string     `json:"token"`
@@ -24,7 +34,7 @@ func EntityLogin(creds EntityCreds) (err error) {
 }
 
 //Ping - ping the sparro server
-func Ping() (session *vnet.Session, err error) {
+func (client *SprwClient) Ping() (session *vnet.Session, err error) {
 	rr := client.Get(vsec.Public, "ping")
 	if rr.Err == nil {
 		session := &vnet.Session{}
@@ -36,6 +46,8 @@ func Ping() (session *vnet.Session, err error) {
 }
 
 //SendParamValue - send a parameter value to sparrow server
-func SendParamValue(paramID string, value string) (err error) {
+func (client *SprwClient) SendParamValue(
+	paramID string,
+	value string) (err error) {
 	return vlog.LogError("Spac:Client", err)
 }
