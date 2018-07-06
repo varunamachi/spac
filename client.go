@@ -37,7 +37,7 @@ func (client *SprwClient) EntityLogin(creds EntityCreds) (err error) {
 func (client *SprwClient) Ping() (session *vnet.Session, err error) {
 	rr := client.Get(vsec.Public, "ping")
 	if rr.Err == nil {
-		session := &vnet.Session{}
+		session = &vnet.Session{}
 		err = rr.Read(session)
 	} else {
 		err = rr.Err
