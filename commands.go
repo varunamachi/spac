@@ -38,13 +38,14 @@ func GetCommands() []cli.Command {
 	return []cli.Command{
 		authPingCommand(),
 		noAuthPingCommand(),
+		entityPingCommand(),
 	}
 }
 
 func authPingCommand() cli.Command {
 	return cli.Command{
-		Name:  "ping",
-		Usage: "Pings sprw server",
+		Name:  "ping-u",
+		Usage: "Pings sprw server as a user",
 		Flags: withDefaultFlags(true),
 		Action: func(ctx *cli.Context) (err error) {
 			ag := vcmn.NewArgGetter(ctx)
@@ -57,6 +58,56 @@ func authPingCommand() cli.Command {
 			if err = ag.Err; err == nil {
 				c := NewClient(server, "sprw", "v0")
 				err = c.Login(userID, password)
+				if err == nil {
+					fmt.Println("Login successful. User: ")
+					vcmn.DumpJSON(c.User)
+					var session *vnet.Session
+					session, err = c.Ping()
+					vcmn.DumpJSON(session)
+				}
+			}
+			return vlog.LogError("Client", err)
+		},
+	}
+}
+
+func entityPingCommand() cli.Command {
+	return cli.Command{
+		Name:  "ping-e",
+		Usage: "Pings sprw server as an entity",
+		Flags: withDefaultFlags(false,
+			cli.StringFlag{
+				Name:  "entityID",
+				Value: "",
+				Usage: "Unique ID of the entity",
+			},
+			cli.StringFlag{
+				Name:  "ownerID",
+				Value: "",
+				Usage: "User ID of the owner of the entity",
+			},
+			cli.StringFlag{
+				Name:  "secret",
+				Value: "",
+				Usage: "Entity secret for login",
+			},
+		),
+		Action: func(ctx *cli.Context) (err error) {
+			ag := vcmn.NewArgGetter(ctx)
+			entityID := ag.GetRequiredString("entityID")
+			userID := ag.GetRequiredString("ownerID")
+			server := ag.GetRequiredString("server")
+			password := ag.GetOptionalString("secret")
+			if len(password) == 0 {
+				password = vcmn.AskPassword("Secret")
+			}
+			if err = ag.Err; err == nil {
+				c := NewClient(server, "sprw", "v0")
+				err = c.EntityLogin(EntityCreds{
+					EntityID: entityID,
+					Owner:    userID,
+					Secret:   password,
+				})
 				if err == nil {
 					fmt.Println("Login successful. User: ")
 					vcmn.DumpJSON(c.User)
