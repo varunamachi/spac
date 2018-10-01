@@ -12,9 +12,9 @@ type SprwClient struct {
 }
 
 //NewClient - creates a new sprw client
-func NewClient(address, appName, versionStr string) *SprwClient {
+func NewClient(address, versionStr string) *SprwClient {
 	return &SprwClient{
-		Client: vnet.NewClient(address, appName, versionStr),
+		Client: vnet.NewClient(address, versionStr),
 	}
 }
 
